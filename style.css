@@ -1,0 +1,71 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    height: 100vh; /* gesamte Höhe ausnutzen */
+    display: flex;
+    justify-content: center; /* horizontal zentrieren */
+    align-items: center;     /* vertikal zentrieren */
+    flex-direction: column;  /* Elemente untereinander */
+    background-color: #fff;
+  }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    /* grid-gap: 5px; */
+    margin: 20px auto;
+  }
+  
+  .cell {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  
+  /* Dünne innere Linien (standardmäßig keine Border) */
+  .cell::before {
+    content: "";
+    position: absolute;
+    background-color: #444;
+  }
+  
+  /* Horizontale Linie: Zellen ohne ganz rechten Rand */
+  .cell:not(:nth-child(3)):not(:nth-child(6)):not(:nth-child(9))::before {
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+   
+    transform-origin: center;
+  }
+  
+  /* Vertikale Linie: Zellen ohne untere Reihe */
+  .cell:nth-child(-n+6)::after {
+    content: "";
+    position: absolute;
+    background-color: #444;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    
+    transform-origin: center;
+  }
+  
+  
+  .cell:hover {
+    background-color: #ddd;
+  }
+
+  .symbol {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+  }
+  
