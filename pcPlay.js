@@ -6,20 +6,11 @@ let gameActive = true;
 const boardElementRef = document.getElementById("game-board");
 const statusElementRef = document.getElementById("status");
 const audioWin = new Audio('sound/win.mp3');
-audioWin.volume = 0.2; 
+audioWin.volume = 0.2;
 const audioDraw = new Audio('sound/draw.mp3');
-audioDraw.volume = 0.4; 
+audioDraw.volume = 0.4;
 
-// function handleClick(index) {
-//   if (!checkIfFieldIsFree(index)) return;
-//   setPlayerSymbol(index);
-//   renderBoard();
-//   checkIfSomeoneWon();
-//   if (gameActive) {
-//     checkWhoIsPlayer();
-//   }
-// };
-
+// Function for handling clicks
 function checkIfFieldIsFree(index) {
   return board[index] === "" && gameActive;
 };
@@ -55,29 +46,32 @@ function setSymbol(feld, index) {
   } else if (board[index] === "O") {
     feld.innerHTML = `<img src="${O_PATH}" alt="O" class="symbol">`;
   }
-};
+}
 
 function setClickFunctionToCell(feld, index) {
   feld.addEventListener("click", function () {
     if (!checkIfFieldIsFree(index)) return;
     setPlayerSymbol(index);
-    setSymbol(feld, index);
-    setBackgroundToCell(feld);
+    setSymbol(feld, index);        // Nur Symbol setzen
+    setBackgroundToCell(feld);     // Zelle einfärben
     checkIfSomeoneWon();
-    if (gameActive) {
+    if (gameActive && currentPlayer === "X") {
       checkWhoIsPlayer();
+      if (gameActive) {
+        computerPlay();  // Computerzug
+      }
     }
   });
-};
+}
 
 function appendCellToBoard(feld) {
   boardElementRef.appendChild(feld);
-};
+}
 
 function checkIfSomeoneWon() {
   if (checkPossibleLines()) {
     statusElementRef.textContent = currentPlayer + " hat gewonnen!";
-    statusElementRef.classList.add('winner')
+    statusElementRef.classList.add('winner');
     animateWinningCells();
     gameActive = false;
     audioWin.play();
@@ -88,16 +82,13 @@ function checkIfSomeoneWon() {
         allFieldsAreFull = false;
       }
     }
-    inCauseOfAllFieldsFull(allFieldsAreFull);
-  }
-};
 
-function inCauseOfAllFieldsFull(allFieldsAreFull){
-  if (allFieldsAreFull) {
-    statusElementRef.textContent = "Unentschieden!";
-    audioDraw.play();
-    statusElementRef.classList.add('winner')
-    gameActive = false;
+    if (allFieldsAreFull) {
+      statusElementRef.textContent = "Unentschieden!";
+      audioDraw.play();
+      statusElementRef.classList.add('winner');
+      gameActive = false;
+    }
   }
 };
 
@@ -106,12 +97,12 @@ function animateWinningCells() {
   cells.forEach(cell => {
     cell.classList.add('pulsate');
   });
-};
+}
 
 function checkWhoIsPlayer() {
   currentPlayer = currentPlayer === "X" ? "O" : "X";
   statusElementRef.textContent = currentPlayer + " du bist dran!";
-};
+}
 
 function checkPossibleLines() {
   const wins = [
@@ -119,10 +110,28 @@ function checkPossibleLines() {
     [0, 3, 6], [1, 4, 7], [2, 5, 8],
     [0, 4, 8], [2, 4, 6]
   ];
+
   return wins.some(([a, b, c]) =>
     board[a] !== "" && board[a] === board[b] && board[b] === board[c]
   );
-};
+}
+
+function computerPlay() {
+  // Wähle zufällig einen freien Feldindex
+  let availableIndices = [];
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] === "") {
+      availableIndices.push(i);
+    }
+  }
+  const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+  setPlayerSymbol(randomIndex);
+  setSymbol(document.getElementsByClassName('cell')[randomIndex], randomIndex);
+  checkIfSomeoneWon();
+  if (gameActive) {
+    checkWhoIsPlayer();
+  }
+}
 
 function resetGame() {
   board = ["", "", "", "", "", "", "", "", ""];
@@ -134,5 +143,5 @@ function resetGame() {
   audioWin.pause();
   audioDraw.currentTime = 0;
   audioDraw.pause();
-  statusElementRef.classList.remove('winner')
-};
+  statusElementRef.classList.remove('winner');
+}
