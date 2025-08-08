@@ -141,9 +141,29 @@ body {
     border-radius: 5px;
   }
 
-  footer{
+header{
+    color: #333;
+    background: linear-gradient(to left, #7a7878a2, transparent);
+    height: 50px;
     width: 100%;
-    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0px;
+padding-top: env(safe-area-inset-top,20);
+  padding-right: env(safe-area-inset-right,5px);
+  padding-bottom: env(safe-area-inset-bottom,0);
+  padding-left: env(safe-area-inset-left,5px);
+  }
+
+  footer{
+    font-size: 14px;
+    color: #333;
+    background: linear-gradient(to right, #7a7878a2, transparent);
+
+    height: 50px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-around;
