@@ -5,17 +5,22 @@ let currentPlayer = "X";
 let gameActive = true;
 const boardElementRef = document.getElementById("game-board");
 const statusElementRef = document.getElementById("status");
+
 const audioWin = new Audio('sound/win.mp3');
 audioWin.volume = 0.2;
+
 const audioDraw = new Audio('sound/draw.mp3');
 audioDraw.volume = 0.4;
 
-// Minimax-Funktion zur Berechnung des besten Zugs für den Computer
+const audioLost = new Audio('sound/lost.mp3');
+audioLost.volume = 0.3;
+
+// Minimax-Algorithmus mit optionalem Fehler
 function minimax(board, depth, isMaximizingPlayer) {
   const winner = checkWinner(board);
-  if (winner === "X") return -10 + depth; // Spieler X gewinnt
-  if (winner === "O") return 10 - depth;  // Computer O gewinnt
-  if (board.every(cell => cell !== "")) return 0;  // Unentschieden
+  if (winner === "X") return -10 + depth;
+  if (winner === "O") return 10 - depth;
+  if (board.every(cell => cell !== "")) return 0;
 
   if (isMaximizingPlayer) {
     let best = -Infinity;
@@ -43,12 +48,16 @@ function minimax(board, depth, isMaximizingPlayer) {
 function findBestMove(board) {
   let bestVal = -Infinity;
   let bestMove = -1;
+  let moves = [];
 
   for (let i = 0; i < board.length; i++) {
     if (board[i] === "") {
       board[i] = "O";
       let moveVal = minimax(board, 0, false);
       board[i] = "";
+
+      moves.push({ index: i, score: moveVal });
+
       if (moveVal > bestVal) {
         bestMove = i;
         bestVal = moveVal;
@@ -56,10 +65,22 @@ function findBestMove(board) {
     }
   }
 
+  const makeMistake = Math.random() < 0.15;
+
+  if (makeMistake) {
+    const filtered = moves
+      .filter(move => move.score >= bestVal - 3)
+      .map(move => move.index);
+
+    if (filtered.length > 0) {
+      const randomIndex = Math.floor(Math.random() * filtered.length);
+      return filtered[randomIndex];
+    }
+  }
+
   return bestMove;
 }
 
-// Überprüfe, ob jemand gewonnen hat
 function checkWinner(board) {
   const wins = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -78,15 +99,15 @@ function checkWinner(board) {
 
 function checkIfFieldIsFree(index) {
   return board[index] === "" && gameActive;
-};
+}
 
 function setPlayerSymbol(index) {
   board[index] = currentPlayer;
-};
+}
 
 function setBackgroundToCell(feld) {
   feld.classList.add('cell-color-afterclick');
-};
+}
 
 function renderBoard() {
   clearBoardAndSetStatus();
@@ -98,12 +119,12 @@ function renderBoard() {
     setClickFunctionToCell(feld, index);
     appendCellToBoard(feld);
   }
-};
+}
 
 function clearBoardAndSetStatus() {
   boardElementRef.innerHTML = "";
   statusElementRef.textContent = currentPlayer + " du bist dran!";
-};
+}
 
 function setSymbol(feld, index) {
   if (board[index] === "X") {
@@ -117,13 +138,14 @@ function setClickFunctionToCell(feld, index) {
   feld.addEventListener("click", function () {
     if (!checkIfFieldIsFree(index)) return;
     setPlayerSymbol(index);
-    setSymbol(feld, index);        // Nur Symbol setzen
-    setBackgroundToCell(feld);     // Zelle einfärben
+    setSymbol(feld, index);
+    setBackgroundToCell(feld);
     checkIfSomeoneWon();
+
     if (gameActive) {
       checkWhoIsPlayer();
       if (gameActive) {
-        computerPlay();  // Computerzug
+        computerPlay();
       }
     }
   });
@@ -140,23 +162,20 @@ function checkIfSomeoneWon() {
     statusElementRef.classList.add('winner');
     animateWinningCells();
     gameActive = false;
-    audioWin.play();
-  } else {
-    let allFieldsAreFull = true;
-    for (let i = 0; i < board.length; i++) {
-      if (board[i] === "") {
-        allFieldsAreFull = false;
-      }
+
+    if (winner === "X") {
+      audioWin.play();
+    } else {
+      audioLost.play();
     }
 
-    if (allFieldsAreFull) {
-      statusElementRef.textContent = "Unentschieden!";
-      audioDraw.play();
-      statusElementRef.classList.add('winner');
-      gameActive = false;
-    }
+  } else if (board.every(cell => cell !== "")) {
+    statusElementRef.textContent = "Unentschieden!";
+    statusElementRef.classList.add('winner');
+    gameActive = false;
+    audioDraw.play();
   }
-};
+}
 
 function animateWinningCells() {
   const cells = document.querySelectorAll('.cell');
@@ -186,9 +205,11 @@ function resetGame() {
   gameActive = true;
   statusElementRef.textContent = currentPlayer + " du bist dran!";
   renderBoard();
-  audioWin.currentTime = 0;
-  audioWin.pause();
-  audioDraw.currentTime = 0;
-  audioDraw.pause();
+
+  [audioWin, audioDraw, audioLost].forEach(audio => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+
   statusElementRef.classList.remove('winner');
 }
