@@ -15,7 +15,6 @@ audioDraw.volume = 0.4;
 const audioLost = new Audio('sound/lost.mp3');
 audioLost.volume = 0.3;
 
-// Minimax-Algorithmus mit optionalem Fehler
 function minimax(board, depth, isMaximizingPlayer) {
   const winner = checkWinner(board);
   if (winner === "X") return -10 + depth;

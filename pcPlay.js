@@ -16,7 +16,6 @@ audioDraw.volume = 0.4;
 const audioLost = new Audio('sound/lost.mp3');
 audioLost.volume = 0.3;
 
-// Start
 renderBoard();
 
 function renderBoard() {
@@ -103,7 +102,7 @@ function animateWinningCells() {
 function computerPlay() {
   if (!gameActive) return;
 
-  const makeMistake = Math.random() < 0.25; // 25% Fehlerchance
+  const makeMistake = Math.random() < 0.25;
   let moveIndex;
 
   if (!makeMistake) {
@@ -115,7 +114,7 @@ function computerPlay() {
     moveIndex = freeFields[Math.floor(Math.random() * freeFields.length)];
   }
 
-  currentPlayer = "O"; // Jetzt ist der PC dran
+  currentPlayer = "O";
   board[moveIndex] = currentPlayer;
 
   const feld = document.getElementsByClassName('cell')[moveIndex];

@@ -9,10 +9,9 @@ const audioWin = new Audio('sound/win.mp3');
 audioWin.volume = 0.2;
 const audioDraw = new Audio('sound/draw.mp3');
 audioDraw.volume = 0.4;
-const audioLost = new Audio('sound/lost.mp3');  // Neu: Sound für Spielerverlust
+const audioLost = new Audio('sound/lost.mp3');
 audioLost.volume = 0.3;
 
-// Function for handling clicks
 function checkIfFieldIsFree(index) {
   return board[index] === "" && gameActive;
 };
@@ -54,21 +53,20 @@ function setClickFunctionToCell(feld, index) {
   feld.addEventListener("click", function () {
     if (!checkIfFieldIsFree(index)) return;
 
-    currentPlayer = "X"; // Spieler ist immer X
-    setPlayerSymbol(index);        // setzt board[index] = X
-    setSymbol(feld, index);        // X auf Spielfeld
-    setBackgroundToCell(feld);     // Farbe setzen
+    currentPlayer = "X";
+    setPlayerSymbol(index);
+    setSymbol(feld, index);
+    setBackgroundToCell(feld);
     checkIfSomeoneWon();
 
     if (gameActive) {
       statusElementRef.textContent = "O denkt...";
       setTimeout(() => {
         computerPlay();
-      }, 1000); // kleine Pause vor PC-Zug
+      }, 1000);
     }
   });
 }
-
 
 function appendCellToBoard(feld) {
   boardElementRef.appendChild(feld);
@@ -81,10 +79,10 @@ function checkIfSomeoneWon() {
     gameActive = false;
 
     if (currentPlayer === "X") {
-      audioWin.play();           // Spieler gewinnt
-      animateWinningCells();     // Nur dann Animation
+      audioWin.play();
+      animateWinningCells();
     } else {
-      audioLost.play();          // PC gewinnt – keine Animation
+      audioLost.play();
     }
 
   } else {
@@ -98,7 +96,6 @@ function checkIfSomeoneWon() {
     }
   }
 }
-
 
 function animateWinningCells() {
   const cells = document.querySelectorAll('.cell');
@@ -127,7 +124,7 @@ function checkPossibleLines() {
 function computerPlay() {
   if (!gameActive) return;
 
-  const makeMistake = Math.random() < 0.25; // 25% Fehlerchance
+  const makeMistake = Math.random() < 0.25;
   let moveIndex;
 
   if (!makeMistake) {
@@ -147,8 +144,7 @@ function computerPlay() {
     moveIndex = available[Math.floor(Math.random() * available.length)];
   }
 
-  // 💥 FEHLTE BISHER:
-  currentPlayer = "O"; // Damit checkIfSomeoneWon() richtig funktioniert
+  currentPlayer = "O";
 
   board[moveIndex] = "O";
   const feld = document.getElementsByClassName('cell')[moveIndex];
@@ -183,8 +179,6 @@ function findCriticalMove(player) {
   return null;
 }
 
-
-// Hilfsfunktion: finde, ob Spieler (X) fast gewonnen hätte
 function findBlockingMove(player) {
   const winCombos = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -223,7 +217,7 @@ function findStrategicMove(player) {
 }
 
 function makeComputerMove(index) {
-  board[index] = "O"; // explizit setzen
+  board[index] = "O";
   const cell = document.getElementsByClassName('cell')[index];
   setSymbol(cell, index);
   setBackgroundToCell(cell);
@@ -234,8 +228,6 @@ function makeComputerMove(index) {
     statusElementRef.textContent = currentPlayer + " du bist dran!";
   }
 }
-
-
 
 function resetGame() {
   board = ["", "", "", "", "", "", "", "", ""];
