@@ -9,6 +9,8 @@ const audioWin = new Audio('sound/win.mp3');
 audioWin.volume = 0.2;
 const audioDraw = new Audio('sound/draw.mp3');
 audioDraw.volume = 0.4;
+const audioLost = new Audio('sound/lost.mp3');  // Neu: Sound für Spielerverlust
+audioLost.volume = 0.3;
 
 // Function for handling clicks
 function checkIfFieldIsFree(index) {
@@ -62,7 +64,7 @@ function setClickFunctionToCell(feld, index) {
       statusElementRef.textContent = "O denkt...";
       setTimeout(() => {
         computerPlay();
-      }, 1200); // kleine Pause vor PC-Zug
+      }, 1000); // kleine Pause vor PC-Zug
     }
   });
 }
@@ -76,16 +78,17 @@ function checkIfSomeoneWon() {
   if (checkPossibleLines()) {
     statusElementRef.textContent = currentPlayer + " hat gewonnen!";
     statusElementRef.classList.add('winner');
-    animateWinningCells();
     gameActive = false;
-    audioWin.play();
-  } else {
-    let allFieldsAreFull = true;
-    for (let i = 0; i < board.length; i++) {
-      if (board[i] === "") {
-        allFieldsAreFull = false;
-      }
+
+    if (currentPlayer === "X") {
+      audioWin.play();           // Spieler gewinnt
+      animateWinningCells();     // Nur dann Animation
+    } else {
+      audioLost.play();          // PC gewinnt – keine Animation
     }
+
+  } else {
+    let allFieldsAreFull = board.every(feld => feld !== "");
 
     if (allFieldsAreFull) {
       statusElementRef.textContent = "Unentschieden!";
@@ -94,7 +97,8 @@ function checkIfSomeoneWon() {
       gameActive = false;
     }
   }
-};
+}
+
 
 function animateWinningCells() {
   const cells = document.querySelectorAll('.cell');
@@ -127,12 +131,10 @@ function computerPlay() {
   let moveIndex;
 
   if (!makeMistake) {
-    // 1. Versuche selbst zu gewinnen
     const winningMove = findCriticalMove("O");
     if (winningMove !== null) {
       moveIndex = winningMove;
     } else {
-      // 2. Blockiere den Spieler
       const blockMove = findCriticalMove("X");
       if (blockMove !== null) {
         moveIndex = blockMove;
@@ -140,13 +142,14 @@ function computerPlay() {
     }
   }
 
-  // 3. Wenn kein kluger Zug oder Fehler geplant → zufällig
   if (moveIndex === undefined) {
     const available = board.map((val, i) => val === "" ? i : null).filter(i => i !== null);
     moveIndex = available[Math.floor(Math.random() * available.length)];
   }
 
-  // Zug ausführen
+  // 💥 FEHLTE BISHER:
+  currentPlayer = "O"; // Damit checkIfSomeoneWon() richtig funktioniert
+
   board[moveIndex] = "O";
   const feld = document.getElementsByClassName('cell')[moveIndex];
   setSymbol(feld, moveIndex);
