@@ -1,0 +1,56 @@
+# Tic Tac Toe – Spiel mit KI-Gegner
+
+Dies ist ein einfaches Tic-Tac-Toe-Spiel im Browser, bei dem der Spieler gegen eine KI spielt. Das Spiel ist vollständig in HTML, CSS und JavaScript umgesetzt.
+
+---
+
+## 🧠 Features
+
+- Klassisches 3×3-Tic-Tac-Toe-Feld
+- Spieler spielt als **X**, Computer als **O**
+- Der Computer trifft **intelligente Entscheidungen**, macht aber auch bewusst Fehler, um das Spiel spannend zu halten
+- Spielstatusanzeige und automatische Rundenverwaltung
+- Responsive Darstellung und Unterstützung von „Safe Areas“ auf Mobilgeräten
+
+
+---
+
+## ▶️ Spiel starten
+
+1. Projekt lokal speichern oder klonen:
+   ```bash
+   git clone https://github.com/MR-1985/TicTacToe
+   ```
+2. Öffne die Datei `index.html` mit einem Browser deiner Wahl.
+3. Viel Spaß beim Spielen!
+
+---
+
+## ⚙️ Anpassungsmöglichkeiten
+
+- Die **KI-Schwierigkeit** kann in der Funktion `computerPlay()` angepasst werden:
+  - Aktuell wählt der Computer eine gute, aber nicht perfekte Strategie.
+  - Wer möchte, kann die pcPlayHard.js oder pcPlay.js ins index.html einbinden, dann wird das Spiel härter, oder eben leichter.
+
+
+---
+
+## ✅ ToDo
+
+- [ ] Spielstand speichern
+- [ ] Mehrspieler-Modus
+- [ ] Animationen beim Gewinnen
+- [ ] Punktesystem
+
+---
+
+## 📄 Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz. Du darfst es frei nutzen, verändern und verbreiten.
+
+---
+
+## 🧑‍💻 Autor
+
+Erstellt von **Marco Rößler**  
+Fragen oder Feedback? Einfach melden!

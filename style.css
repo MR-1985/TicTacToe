@@ -177,4 +177,5 @@ padding-top: env(safe-area-inset-top,0);
 
   a{
     text-decoration: none;
+    font-size: 8px;
   }
